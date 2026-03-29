@@ -18,8 +18,8 @@ class Usuario:
     def cpfAnalise(self):
         print(f"Olá, {self.nome}!")
         while True:
-            self.cpf = input("Digite o CPF a ser analisado:\n(Apenas os 11 dígitos, sem pontuação)\n")
             limpatela()
+            self.cpf = input("Digite o CPF a ser analisado:\n(Apenas os 11 dígitos, sem pontuação)\n")
             try:
                 int(self.cpf)
                 if len(self.cpf) != 11:
@@ -52,6 +52,7 @@ class Usuario:
         lista_cpf.reverse()
         lista_cpf.append(s_digito)
 
+        print()
         if p_digito == p_digitofornecido and s_digito == s_digitofornecido:
             print("CPF válido.\n")
         else:
