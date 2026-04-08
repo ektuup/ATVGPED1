@@ -6,7 +6,7 @@ Estatisticas results;
 int main(){
     results = new_Estatisticas();
     PriorityQueue* fila = new_priorityQueue();
-    String filename;
+    const char* filename = "clientes.txt";
     Pessoa aux;
     int flag = 1, lido;
 
@@ -29,7 +29,6 @@ int main(){
                 break;
             case '4':
                 ClearScreen();  
-                // printf("Informe o nome do arquivo que voce deseja")
                 lido = ReadFile(filename, fila);
                 printf("%s", lido ? "Arquivo lido com sucesso!\n" : "Falha ao ler o arquivo\n");
                 break;
