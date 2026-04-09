@@ -6,7 +6,7 @@ Estatisticas results;
 int main(){
     results = new_Estatisticas();
     PriorityQueue* fila = new_priorityQueue();
-    String filename;
+    String filepath;
     Pessoa aux;
     int flag = 1, enter;
 
@@ -17,10 +17,11 @@ int main(){
             case '1':
                 ClearScreen();
                 aux = getPessoa();
+                ClearScreen();
                 ChegadaDePessoa(fila, aux);
                 break;
             case '2':
-                ClearScreen();   
+                ClearScreen();
                 AtendimentoDePessoa(fila);
                 break;
             case '3':
@@ -33,8 +34,8 @@ int main(){
                 break;
             case '4':
                 ClearScreen();  
-                filename = getFilename();
-                LerDoArquivo(filename, fila);
+                filepath = getFilePath();
+                LerDoArquivo(filepath, fila);
                 break;
             case '0':
                 if(fila->size){

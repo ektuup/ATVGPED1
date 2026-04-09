@@ -13,6 +13,6 @@ Pessoa getPessoa();
 void ChegadaDePessoa(PriorityQueue* pq, Pessoa p);
 void LerDoArquivo(String filename, PriorityQueue* pq);
 void AtendimentoDePessoa(PriorityQueue* pq);
-String getFilename();
+String getFilePath();
 
 #endif

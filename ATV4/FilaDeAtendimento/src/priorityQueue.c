@@ -82,10 +82,11 @@ void delete_priorityQueue(PriorityQueue** pq){
 void printpriorityQueue(PriorityQueue* pq){
     PriorityQueue *aux = new_priorityQueue();
     Pessoa p;
+    int cont = 0;
     printf("Pessoas na fila de atendimento:\n");
     while(pq->size){
         p = deQueue(pq);
-        printf("%s%s\n", p.prioridade == HIGH ? "*" : "", p.nome.data);
+        printf("%d - %s%s\n", ++cont, p.prioridade == HIGH ? "*" : "", p.nome.data);
         enQueue(aux, p);
         //usa duas filas com prioridade para guardar os dados enquanto printa, não havendo perda
     }

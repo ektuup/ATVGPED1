@@ -14,3 +14,7 @@ Maria;76
 Francisca;68
 Helder;18
 Luiz;56
+Hanrri;20
+Gleidson;21
+Pedro;54
+Marcos;14

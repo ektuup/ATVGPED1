@@ -67,8 +67,7 @@ int ReadFile(String filename, PriorityQueue* pq){
     int cont = 0, olha, idade;
     
     while(fgets(line.data, sizeof(line.data), arq)){
-        line.data[strlen(line.data) - 1] = '\0'; //remove o '\n' absorvido pelo fgets
-        
+        line.data[strcspn(line.data, "\n")] = '\0'; //remove o '\n' absorvido pelo fgets
         int i = 0;
         while(line.data[i] == ' ') i++; 
         if(line.data[i] == '\0') continue;  //ignora linhas vazias
@@ -76,17 +75,15 @@ int ReadFile(String filename, PriorityQueue* pq){
         int lido = sscanf(&line.data[i], "%63[^;];%d", nome.data, &idade); //le a partir da posição que nao tem mais espaços
         
         if(lido < 2){
-            line.data[strlen(line.data) - 1] = '\0';
+            line.data[strcspn(line.data, "\n")] = '\0';
+
             printf("Erro em '%s' : cada linha do arquivo deve ser do formato 'nome;idade'\n", line.data);
             for(int k = 0; k < cont; k++){
                 deQueue(pq);
             }
             return 0;
         }
-        if(cont == MAX_PESSOAS){
-            printf("Erro: capacidade maxima de pessoas permitido é %d. por favor aumente a capacidade caso queira armazenar mais\n", MAX_PESSOAS);
-            return cont;
-        }
+        if(cont == MAX_PESSOAS) return MAX_PESSOAS;
         
         enQueue(pq, new_Pessoa(nome, idade));
         cont++;
@@ -110,14 +107,14 @@ Pessoa getPessoa(){
 
 void ChegadaDePessoa(PriorityQueue* pq, Pessoa p){
     enQueue(pq, p);
-    printf("%s foi inserido(a) na fila\n", p.nome.data);
+    printf("%s foi inserido(a) %sna fila\n",  p.nome.data, p.prioridade == HIGH ? "com prioridade " : "");
 }
 
 void AtendimentoDePessoa(PriorityQueue* pq){
     Pessoa atendida;
     if(pq->size){
         atendida = deQueue(pq);
-        printf("%s foi atendido(a)\n", atendida.nome.data);
+        printf("%s%s foi atendido(a)\n", atendida.prioridade == HIGH ? "*" : "", atendida.nome.data);
         
         (atendida.prioridade == HIGH) ? results.atendidos_Cpr++ : results.atendidos_Spr++;
         results.atendidas[results.total_atendidos++] = atendida;
@@ -126,24 +123,25 @@ void AtendimentoDePessoa(PriorityQueue* pq){
     }
 }
 
-String getFilename(){
-    String filename;
+String getFilePath(){
+    String filename, filepath = new_String("inputs/");
     Header();
     printf("informe o nome do arquivo que voce quer ler (nome.txt):\n");
     scanf(" %63[^\n]", filename.data);
-    
-    return filename;
+    strcat(filepath.data, filename.data);
+    return filepath;
 }
 
 void LerDoArquivo(String filename, PriorityQueue* pq){    
     int lido = ReadFile(filename, pq);
 
-    ClearScreen();
     if(lido > 0){
         printf("Arquivo lido com sucesso!\n");
     }else if(lido == 0){
         printf("Falha ao ler o arquivo\n");
     }else if(lido == -1){
         printf("Arquivo nao encontrado\n");
+    }else if(lido == MAX_PESSOAS){
+        printf("Erro: capacidade maxima de pessoas permitido é %d. por favor aumente a capacidade caso queira armazenar mais\n", MAX_PESSOAS);
     }
 }
