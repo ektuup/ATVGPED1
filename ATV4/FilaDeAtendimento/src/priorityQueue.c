@@ -80,20 +80,23 @@ void delete_priorityQueue(PriorityQueue** pq){
 }
 
 void printpriorityQueue(PriorityQueue* pq){
-    PriorityQueue *aux = new_priorityQueue();
-    Pessoa p;
-    int cont = 0;
-    printf("Pessoas na fila de atendimento:\n");
-    while(pq->size){
-        p = deQueue(pq);
-        printf("%d - %s%s\n", ++cont, p.prioridade == HIGH ? "*" : "", p.nome.data);
-        enQueue(aux, p);
-        //usa duas filas com prioridade para guardar os dados enquanto printa, não havendo perda
+    node* auxHigh = pq->highPriority, *auxNormal = pq->normalPriority;
+    int cont = pq->contDequeue, i = 0;
+    while(auxHigh or auxNormal){
+        if(cont == 0 and auxHigh != NULL){
+            printf("%d - %s%s\n", ++i, auxHigh->data.prioridade == HIGH ? "*" : "", auxHigh->data.nome.data);
+            auxHigh = auxHigh->next;
+            cont = (cont + 1) mod 4;
+            //uso do mod 4 porque se contdeQueue == 0, entao tira da prioridade, se for 1, 2 ou 3 tira do normal
+        }else if(auxNormal != NULL){
+            printf("%d - %s%s\n", ++i, auxNormal->data.prioridade == HIGH ? "*" : "", auxNormal->data.nome.data);
+            auxNormal = auxNormal->next;
+            cont = (cont + 1) mod 4;
+        }else if(auxHigh != NULL){
+            printf("%d - %s%s\n", ++i, auxHigh->data.prioridade == HIGH ? "*" : "", auxHigh->data.nome.data);
+            auxHigh = auxHigh->next;
+            cont = (cont + 1) mod 4;
+            //caso o contDequeue seja diferente de 0, mas nao hajam pessoas sem prioridade na fila, remove os com prioridade
+        }
     }
-    
-    while(aux->size){
-        enQueue(pq, deQueue(aux));
-        //devolve os dados para a fila original
-    }
-    delete_priorityQueue(&aux);
 }
