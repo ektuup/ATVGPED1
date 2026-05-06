@@ -1,13 +1,15 @@
 from tkinter import *
 from tkinter import filedialog, ttk
 import os
+import csv
 from InsertionSort import FileSort
 
 class GUI:
     def __init__(self, window):
         self.window = window
         self.file = None
-        self.time_sort = None
+        self.avegare_time_sort = 0
+        self.num_of_sorts = 0
         window.config(bg = "#222220")   
         window.geometry("840x640")
         window.resizable(False, False)
@@ -52,14 +54,13 @@ class GUI:
             self.window.update_idletasks()
 
             self.file.InsertionSort()
-            self.time_sort = self.file.getTime()
 
             self.status.config(text="Concluído!")
 
-            self.file.OrdenedFile()
-        except:
+            self.file.OrdenedFileWrite()
+        except Exception as e:
             self.monitor.config(state = 'normal')
-            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.insert(END, f"Ação inválida: Selecione um arquivo; {e}\n")
             self.monitor.config(state = "disable")
 
 
@@ -72,66 +73,90 @@ class GUI:
         except:
             self.monitor.delete("1.0", END)
             self.monitor.config(state = 'normal')
-            self.monitor.insert(END, "Ação inválida." + '\n')
+            self.monitor.insert(END, "Ação inválida.\n")
             self.monitor.config(state = "disable")
 
     def displayDisordered(self):
         try:
-            if self.file is None:
-                raise Exception
-
             self.status.config(text="")
             self.monitor.config(state = "normal")
             self.monitor.delete("1.0", END)
-            with open(self.file.file, 'r', encoding = 'utf-8') as tx:
-                linha = tx.readline()
-                for i in range(10):
-                    self.monitor.insert(END + "\n", linha)
-                    linha = tx.readline()
+
+            for i in range(10):
+                self.monitor.insert(END + "\n", self.file.arr.array[i] + '\n')
+
             self.monitor.config(state = "disabled")
         except:
             self.monitor.delete("1.0", END)
             self.monitor.config(state = 'normal')
-            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.insert(END, "Ação inválida: Selecione um arquivo\n")
             self.monitor.config(state = "disable")
 
     def displayOrdered(self):
         try:
-            if self.file is None:
-                raise Exception
             self.status.config(text="")
             self.monitor.config(state = "normal")
             self.monitor.delete("1.0", END)
             self.status
-            with open(self.file.ord_file, 'r', encoding = 'utf-8') as tx:
-                linha = tx.readline()
-                for i in range(10):
-                    self.monitor.insert(END + "\n", linha)
-                    linha = tx.readline()
+            for i in range(10):
+                self.monitor.insert(END + "\n", self.file.arr_sorted.array[i] + '\n')
 
             self.monitor.config(state = "disabled")
         except:
             self.monitor.delete("1.0", END)
             self.monitor.config(state = 'normal')
-            self.monitor.insert(END, "Ação inválida." + "\n")
+            self.monitor.insert(END, "Ação inválida: Selecione e ordene um arquivo\n")
             self.monitor.config(state = "disable")
 
     def sortStats(self):
         try:
             if self.file is None:
                 raise Exception
+            time, elements, trades = self.getAverage()
             self.status.config(text="")
             self.monitor.config(state = "normal")
             self.monitor.delete('1.0', END)
-            self.monitor.insert(END, f"Tempo de ordenação: {self.time_sort:.10f} segundos\n") 
-            self.monitor.insert(END, f"Quantidade de trocas: {self.file.getTrades()}\n") 
-            self.monitor.insert(END, f"Quantidade de elementos: {self.file.getElements()}")
+            self.monitor.insert(END, f"Tempo médio de ordenação: {time:.10f} segundos\n") 
+            self.monitor.insert(END, f"Quantidade média de elementos: {elements}\n")
+            self.monitor.insert(END, f"Quantidade média de trocas: {trades}\n") 
+            self.monitor.insert(END, f"Quantidade de ordenações: {self.getNumOfSorts()}\n") 
             self.monitor.config(state = "disabled")
-        except:
+        except Exception as e:
             self.monitor.delete("1.0", END)
             self.monitor.config(state = 'normal')
-            self.monitor.insert(END, "Ação inválida." + '\n')
+            self.monitor.insert(END, f"Ação inválida: Selecione e ordene um arquivo {e}\n" )
             self.monitor.config(state = "disable")
+
+    def getAverage(self):
+        sum_time = 0.0
+        sum_elements = 0
+        sum_trades = 0
+        cont = 0
+        with open('sorting_times.csv', 'r') as ftimes:
+            reader = csv.reader(ftimes)
+
+            for line in reader:
+                if line and line[0] == "Tempo_de_ordenação":
+                    continue
+
+                if len(line) == 3:
+                    sum_time += float(line[0])
+                    sum_elements += int(line[1])
+                    sum_trades += int(line[2])
+                    cont += 1 
+        return sum_time/cont, sum_elements/cont, sum_trades/cont
+    
+    def getNumOfSorts(self):
+        cont = 0
+        with open('sorting_times.csv', 'r') as ftimes:
+            reader = csv.reader(ftimes)
+
+            for line in reader:
+                cont += 1;
+        
+        return cont - 1; ##remove o reader
+
+     
 
 window = Tk(className=" Estatisticas Insertion Sort")
 GUI(window)

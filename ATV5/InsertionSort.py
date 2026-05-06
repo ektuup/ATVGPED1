@@ -1,35 +1,45 @@
 import time
 import os
+import csv
 
 class Array:
-    def __init__(self, size = 5):
+    def __init__(self, size = 64):
         self.size = size
         self.array = [None] * self.size
-        self.index = 0
+        self.len = 0
 
     def insert(self, value):
         self.realoc()
 
-        self.array[self.index] = value
-        self.index += 1
+        self.array[self.len] = value
+        self.len += 1
 
     def realoc(self):
-        prop = self.index/self.size
+        prop = self.len/self.size
 
         if prop > 0.8:
             self.size *= 2
             array_aux = [None] * self.size
 
-            for i in range(self.index):
+            for i in range(self.len):
                 array_aux[i] = self.array[i]
 
             self.array = array_aux
+
+    def copy(self):
+        temp = Array()
+        for i in range(self.len):
+            temp.insert(self.array[i])
+
+        return temp
+        
         
 class FileSort:
-    def __init__(self, file):
+    def __init__(self, path):
         self.arr = Array()
-        self.file = file
-        self.ord_file = os.path.dirname(file) + "/ordened_" + os.path.basename(file)
+        self.arr_sorted  = Array()
+        self.file = path
+        self.ord_file = os.path.dirname(path) + "/ordened_" + os.path.basename(path)
         self.time = 0
         self.trades = 0
 
@@ -43,23 +53,34 @@ class FileSort:
         self.trades = 0
         start = time.perf_counter()
 
-        for i in range(1, self.arr.index):
-            current = self.arr.array[i]
+        self.arr_sorted = self.arr.copy()
+        for i in range(1, self.arr_sorted.len):
+            current = self.arr_sorted.array[i]
             j = i - 1
 
-            while j >= 0 and self.arr.array[j] > current:
+            while j >= 0 and self.arr_sorted.array[j] > current:
                 self.trades += 1
-                self.arr.array[j + 1] = self.arr.array[j] 
+                self.arr_sorted.array[j + 1] = self.arr_sorted.array[j] 
                 j -= 1
 
-            self.arr.array[j + 1] = current
+            self.arr_sorted.array[j + 1] = current
+
         end = time.perf_counter()
         self.time = end - start
 
-    def OrdenedFile(self):
+    def OrdenedFileWrite(self):
         with open(self.ord_file, 'w', encoding = 'utf-8') as tx:
-            for i in range(self.arr.index):
-                tx.write(self.arr.array[i] + "\n")
+            for i in range(self.arr_sorted.len):
+                tx.write(f"{self.arr_sorted.array[i]}\n")
+
+        file_exist = os.path.isfile('sorting_times.csv')
+
+        with open('sorting_times.csv', 'a') as ftimes:
+            writer = csv.writer(ftimes)
+            if not file_exist:
+                writer.writerow(["Tempo_de_ordenação", "Número_de_elementos", "Quantidade_de_trocas"])
+
+            writer.writerow([self.time, self.arr.len, self.trades])
 
     def getTime(self):
         return self.time
@@ -68,4 +89,4 @@ class FileSort:
         return self.trades
 
     def getElements(self):
-        return self.arr.index
+        return self.arr.len
