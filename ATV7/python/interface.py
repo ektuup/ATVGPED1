@@ -41,11 +41,10 @@ class SortWorker(QtCore.QThread):
 
     def run(self):
         times_sorts = []
-        selected_maps = {nm : func for nm, func in map_sort.items() if nm in self.selected_algorithms}
 
-        for algorithm, sort in selected_maps.items():
-            array.copy(unordened_array)
+        for algorithm, sort in map_sort.items():
             if algorithm in self.selected_algorithms:
+                array.copy(unordened_array)
                 self.progress.emit(f"Ordenando '{self.nometxt}' com {algorithm}...")
 
                 start = time.time()
