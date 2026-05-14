@@ -14,7 +14,6 @@ map_sort = {
     "Mergesort-Híbrido" : array.hibrid_merge_sort,
     "Mergesort-BottomUp" : array.merge_sort,
     "Heapsort" : array.heap_sort,
-    "Quicksort-randomizado" : array.quick_sort_rand
 }
 
 def fwrite(name):
@@ -90,7 +89,7 @@ class myWidget(QtWidgets.QWidget):
 
     def define_data(self):
         self.squares = ["Bubblesort", "Selectionsort", "Insertionsort"]
-        self.linearithmics = ["Shellsort", "Mergesort-BottomUp", "Quicksort", "Heapsort", "Mergesort-Híbrido", "Quicksort-randomizado"]
+        self.linearithmics = ["Shellsort", "Mergesort-BottomUp", "Quicksort", "Heapsort", "Mergesort-Híbrido"]
         self.files = ["nomes100k.txt", "nomes250k.txt", "nomes500k.txt", "nomes1m.txt"]
         self.groups = [
             "Bubblesort x Selection x Insertion", 
