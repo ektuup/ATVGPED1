@@ -1,6 +1,6 @@
 from  PySide6 import QtWidgets, QtCore
 from sortlib import SortVector
-import sys, random, csv, time, os
+import sys, random, csv, time, os, unicodedata
 
 array = SortVector()
 unordened_array = SortVector()
@@ -15,10 +15,23 @@ map_sort = {
     "Heapsort" : array.heap_sort
 }
 
+def string_cleaner(string):
+    clean = unicodedata.normalize("NFKD", string)
+    return "".join([c for c in clean if not unicodedata.combining(c)])
+
 def fwrite(name, array):
     with open(name, 'w') as f:
         for i in range(array.len()):
             f.write(array.at(i) + '\n')
+
+def fread(name, array):
+    try:
+        with open(os.getcwd() + "/nomestxt/" + name, 'r') as f:
+            for line in f:
+                array.insert(line.strip())
+    except FileNotFoundError:
+        raise FileNotFoundError
+        
 
 def csv_write(file_name, header, sidebar, data):
     header = header
@@ -161,13 +174,11 @@ class myWidget(QtWidgets.QWidget):
             return
 
         nometxt = self._file_queue.pop(0)
+
         try:
-            with open(os.getcwd() + "/nomestxt/" + nometxt, 'r') as f:
-                for line in f:
-                    unordened_array.insert(line.strip())
+            fread(nometxt, unordened_array)
         except FileNotFoundError:
             self.label.setText(f"Arquivo '{nometxt}' não encontrado no diretório ./nomestxt")
-            return
 
         self._current_file = nometxt
         self.worker = SortWorker(self.selected_algorithms, nometxt)
