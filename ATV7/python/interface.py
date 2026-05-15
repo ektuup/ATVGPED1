@@ -17,7 +17,11 @@ map_sort = {
 
 def string_cleaner(string):
     clean = unicodedata.normalize("NFKD", string)
-    return "".join([c for c in clean if not unicodedata.combining(c)])
+    clean_string = ''
+    for c in clean:
+        if not unicodedata.combining(c):
+            clean_string += c
+    return clean_string
 
 def fwrite(name, array):
     with open(name, 'w') as f:
@@ -28,7 +32,8 @@ def fread(name, array):
     try:
         with open(os.getcwd() + "/nomestxt/" + name, 'r') as f:
             for line in f:
-                array.insert(line.strip())
+                pal = string_cleaner(line.strip())
+                array.insert(pal)
     except FileNotFoundError:
         raise FileNotFoundError
         
