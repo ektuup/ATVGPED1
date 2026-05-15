@@ -1,6 +1,6 @@
 from  PySide6 import QtWidgets, QtCore
 from sortlib import SortVector
-import sys, random, csv, time, os, unicodedata
+import sys, random, csv, time, os, unicodedata, re
 
 array = SortVector()
 unordened_array = SortVector()
