@@ -203,7 +203,6 @@ class myWidget(QtWidgets.QWidget):
         self.label.setText("Ordenação concluída!")
 
         nometxt_ordened = os.getcwd() + "/nomestxt/" + nometxt[:-4] + "_ordened.txt"
-
         fwrite(nometxt_ordened, array)
 
         self._run_next_file()
